@@ -1,74 +1,69 @@
 """
 production_system.py
-
-TODO:
-- File ini digunakan untuk menentukan status mahasiswa.
-- Input-nya berupa fakta dari hasil deteksi YOLO.
-- Output-nya berupa status:
-  Focused, Distracted, Drowsy, Microsleep, atau Undetected.
 """
-
 
 def classify_focus(facts):
 
-    # TODO: Buat aturan IF-THEN berdasarkan fakta yang diterima.
-
-    """
-    Contoh facts:
-    {
-        "face_detected": True,
-        "eyes_open": True,
-        "eyes_closed": False,
-        "phone_detected": False,
-        "head_down": False,
-        "eyes_closed_duration": 0
-    }
-    """
-
-    # TODO: Atur batas durasi sesuaikan dengan laporan
     drowsy_limit = 5
     microsleep_limit = 10
 
-    # TODO: Rule 1 - Jika wajah tidak terdeteksi
-    if facts["face_detected"] == False:
+    # =========================
+    # RULE 1 - wajah tidak ada
+    # =========================
+    if not facts["face_detected"]:
         return "Undetected"
 
-    # TODO: Rule 2 - Jika mata tertutup terlalu lama
+    # =========================
+    # RULE 2 - microsleep
+    # =========================
     if facts["eyes_closed_duration"] >= microsleep_limit:
         return "Microsleep"
 
-    # TODO: Rule 3 - Jika mata tertutup beberapa detik
+    # =========================
+    # RULE 3 - drowsy
+    # =========================
     if facts["eyes_closed_duration"] >= drowsy_limit:
         return "Drowsy"
 
-    # TODO: Rule 4 - Jika HP terdeteksi
-    if facts["phone_detected"] == True:
+    # =========================
+    # RULE 4 - main HP
+    # =========================
+    if facts["phone_detected"]:
         return "Distracted"
 
-    # TODO: Rule 5 - Jika kepala menunduk
-    if facts["head_down"] == True:
+    # =========================
+    # RULE 5 - melihat ke samping
+    # =========================
+    if facts["looking_away"]:
+        return "Distracted"
+
+    # =========================
+    # RULE 6 - kepala menunduk
+    # =========================
+    if facts["head_down"]:
         return "Drowsy"
 
-    # TODO: Rule 6 - Jika mata terbuka dan tidak ada gangguan
-    if facts["eyes_open"] == True:
+    # =========================
+    # RULE 7 - fokus
+    # =========================
+    if facts["eyes_open"]:
         return "Focused"
 
-    # TODO: Jika tidak ada kondisi yang cocok
     return "Undetected"
 
 
 def get_color(status):
 
-    # TODO: Warna untuk tampilan teks di OpenCV. Format warna OpenCV adalah BGR.
-
-
     if status == "Focused":
-        return (0, 255, 0)      # hijau
+        return (0, 255, 0)
+
     elif status == "Distracted":
-        return (0, 165, 255)    # oranye
+        return (0, 165, 255)
+
     elif status == "Drowsy":
-        return (0, 255, 255)    # kuning
+        return (0, 255, 255)
+
     elif status == "Microsleep":
-        return (0, 0, 255)      # merah
-    else:
-        return (128, 128, 128)  # abu-abu
+        return (0, 0, 255)
+
+    return (128, 128, 128)
